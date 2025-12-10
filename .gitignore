@@ -1,0 +1,17 @@
+# Compiled object files
+*.o
+*.a
+
+# Build outputs
+kernel.bin
+mnmkernel_sim
+
+# Log files
+*.log
+
+# Editor & OS junk
+.DS_Store
+*.swp
+*~
+.vscode/
+.idea/
