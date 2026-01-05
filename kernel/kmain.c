@@ -3,6 +3,7 @@
 
 extern void init_gdt(void);
 extern void init_idt(void);
+extern void pmm_init(void);
 
 static inline void outb(uint16_t port, uint8_t val) {
     __asm__ volatile ("outb %0, %1" : : "a"(val), "Nd"(port));
@@ -23,6 +24,8 @@ void kernel_main(uint32_t magic, uint32_t addr) {
     print_serial(msg);
     print_serial("VGA Memory mapped successfully.\n");
 
+    print_serial("Initializing Physical Memory Manager...\n");
+    pmm_init();
     print_serial("Initializing GDT...\n");
     init_gdt();
     print_serial("Initializing IDT...\n");
