@@ -2,7 +2,8 @@ CC = gcc
 
 OS_BIN = kernel.bin
 OS_OBJS = kernel/boot.o kernel/kmain.o kernel/gdt.o kernel/idt.o \
-          kernel/isr.o kernel/isr_s.o kernel/gdt_flush.o kernel/idt_flush.o
+          kernel/isr.o kernel/isr_s.o kernel/gdt_flush.o kernel/idt_flush.o \
+          kernel/pmm.o kernel/paging.o kernel/elf_loader.o kernel/fs/initrd.o
 
 .PHONY: all clean os qemu
 
@@ -27,7 +28,10 @@ kernel/isr_s.o: kernel/isr.S
 	$(CC) -m32 -c $< -o $@
 
 kernel/kmain.o: kernel/kmain.c
-	$(CC) -m32 -Ikernel -ffreestanding -fno-stack-protector -c $< -o $@
+	$(CC) -m32 -Ikernel -Ikernel/fs -ffreestanding -fno-stack-protector -c $< -o $@
+
+kernel/fs/initrd.o: kernel/fs/initrd.c
+	$(CC) -m32 -Ikernel -Ikernel/fs -ffreestanding -fno-stack-protector -c $< -o $@
 
 %.o: %.c
 	$(CC) -m32 -Ikernel -ffreestanding -fno-stack-protector -c $< -o $@
