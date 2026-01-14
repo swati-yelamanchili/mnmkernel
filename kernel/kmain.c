@@ -3,7 +3,9 @@
 
 extern void init_gdt(void);
 extern void init_idt(void);
+extern void init_paging(void);
 extern void pmm_init(void);
+extern void set_kernel_stack(uint32_t stack);
 
 static inline void outb(uint16_t port, uint8_t val) {
     __asm__ volatile ("outb %0, %1" : : "a"(val), "Nd"(port));
@@ -30,6 +32,13 @@ void kernel_main(uint32_t magic, uint32_t addr) {
     init_gdt();
     print_serial("Initializing IDT...\n");
     init_idt();
+    print_serial("Initializing Hardware Paging...\n");
+    init_paging();
+
+    uint32_t kernel_stack;
+    __asm__ volatile("mov %%esp, %0" : "=r"(kernel_stack));
+    set_kernel_stack(kernel_stack);
+
     print_serial("Enabling Interrupts...\n");
     __asm__ volatile("sti");
     print_serial("Kernel Ready.\n");
