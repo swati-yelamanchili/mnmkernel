@@ -15,3 +15,13 @@ mnmkernel_sim
 *~
 .vscode/
 .idea/
+
+# Ramdisk image (generated)
+initrd.img
+
+# Test binaries (built from source)
+tests/bin/hello
+tests/bin/cat
+tests/bin/fastpath64
+tests/bin/hello32
+tests/bin/cat32
