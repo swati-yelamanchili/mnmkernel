@@ -1,38 +1,48 @@
-# MNMKernel
+# MNMKernel — Custom 32-bit x86 OS Kernel
 
-A from-scratch 32-bit x86 OS kernel in C and x86 Assembly, running in QEMU.
+> A fully functional baremetal OS in C and x86 Assembly — boots in QEMU, loads Ring 3 ELF binaries, preemptive scheduler.
 
 ## What Is This?
 
-MNMKernel is a baremetal x86 OS kernel built without libc or external OS libraries.
-It boots via a Multiboot-compliant bootloader, initializes the GDT and IDT for
-hardware abstraction, enables virtual memory paging through the x86 MMU, and
-provides a foundation for Ring 3 userland execution.
+MNMKernel is a from-scratch x86 OS kernel — no libc, no external OS libraries.
+Every subsystem was implemented directly against the x86 hardware specification.
 
-## Architecture
+## Features
 
-```
-RING 0 KERNEL
-  boot.S → kernel_main()
-  → PMM (bitmap frame allocator)
-  → GDT (6 entries: null, ring0, ring3, TSS)
-  → IDT (256 gates: exceptions, IRQs, syscall)
-  → MMU (page directory + demand pager)
-```
+- Multiboot-compliant `boot.S` bootloader
+- GDT (6 entries: null, ring0, ring3, TSS) + IDT (256 gates)
+- Bitmap Physical Memory Manager
+- Two-level x86 hardware paging with demand page fault handler
+- Linux-compatible `int $0x80` syscall ABI (write/open/read/close/exit)
+- ELF32 binary loader (PT_LOAD segments via demand pager)
+- InitRD ramdisk VFS
+- PIT-driven preemptive round-robin scheduler
 
-## Memory Layout
-
-| Region         | Address      |
-|----------------|-------------|
-| Kernel .text   | 0x00100000  |
-| VGA buffer     | 0x000B8000  |
-| User processes | 0x80000000+ |
-
-## Build
-
-Requires `gcc-multilib` and `qemu-system-i386`.
+## Build & Run
 
 ```sh
+# Requirements: gcc-multilib, qemu-system-i386, make
 make clean && make os
+make tests/bin/hello tests/bin/cat
+./tools/make_initrd initrd.img tests/bin/hello tests/bin/cat
 make qemu
 ```
+
+## Project Status
+
+| Phase | Feature | Status |
+|---|---|---|
+| 0 | Boot in QEMU | ✅ Done |
+| 1 | GDT / IDT | ✅ Done |
+| 2 | PMM | ✅ Done |
+| 3 | x86 Paging + Demand Pager | ✅ Done |
+| 4 | Ring 3 + TSS | ✅ Done |
+| 5 | ELF32 Loader | ✅ Done |
+| 6 | Preemptive Scheduler | ✅ Done |
+| 7 | InitRD VFS + Syscalls | ✅ Done |
+| 8 | Per-process address spaces | 🔜 Planned |
+| 9 | Shell / keyboard input | 🔜 Planned |
+
+## License
+
+MIT License. See [LICENSE](LICENSE).
