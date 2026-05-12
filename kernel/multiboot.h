@@ -73,4 +73,3 @@ struct multiboot_mod_list {
 };
 
 #endif
-
